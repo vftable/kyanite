@@ -1,0 +1,9 @@
+addr.json
+cocos2d.json
+package-lock.json
+*.txt
+*.ini
+node_modules/
+dist/
+codegen/output/
+.vscode/
