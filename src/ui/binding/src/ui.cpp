@@ -100,7 +100,6 @@ void Render(Env env)
 	ImGui::NewFrame();
 	ImGui::GetIO().MouseDrawCursor = menuShow;
 
-	const char* exampleMods[5] = { "Rainbow Icon", "FPS Bypass", "NoClip", "Icon Unlock", "Cocos Explorer" };
 
 	if (menuShow)
 	{
