@@ -60,6 +60,8 @@ console.log();
 
 UI.setupOverlay("Geometry Dash");
 
+UI.Components.createCategory("ExampleMod");
+
 UI.Components.createLabel("Example Text");
 
 UI.Components.createCheckbox("Example Checkbox", (value: boolean) => {

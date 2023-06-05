@@ -6,6 +6,7 @@
 #include <d3d9.h>
 
 #include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
 #include "imgui/imgui_impl_dx9.h"
 #include "imgui/imgui_impl_win32.h"
 
@@ -104,8 +105,7 @@ void Render(Env env)
 	if (menuShow)
 	{
 		InputHandler();
-		ImGui::SetNextWindowSize(ImVec2(300, 300));
-		ImGui::Begin("Kyanite", 0);
+		ImGui::Begin("Kyanite", &menuShow);
 
 		AllocConsole();
 		freopen("CONOUT$", "w", stdout);
@@ -123,6 +123,10 @@ void Render(Env env)
 				}
 
 				oldToggleState[i] = toggleState[i];
+			} else if (renderElements[i].type == "category") {
+				ImGui::SetCurrentContext(ctx);
+
+				ImGui::SeparatorText(renderElements[i].label.c_str());
 			} else if (renderElements[i].type == "label") {
 				ImGui::SetCurrentContext(ctx);
 
@@ -130,7 +134,7 @@ void Render(Env env)
 			} else if (renderElements[i].type == "slider") {
 				ImGui::SetCurrentContext(ctx);
 
-				ImGui::SliderFloat(renderElements[i].label.c_str(), &sliderState[i], 0.0f, 1.0f, "ratio = %.3f");
+				ImGui::SliderFloat(renderElements[i].label.c_str(), &sliderState[i], 0.0f, 1.0f, "%.3f");
 
 				if (sliderState[i] != oldSliderState[i]) {
 					std::get<FunctionReference>(renderElements[i].callback).Call({ Number::New(env, sliderState[i]) });
@@ -288,6 +292,8 @@ void DoRender(const CallbackInfo &info) {
 	style.PopupRounding = 4;
 	style.ChildRounding = 4;
 
+	style.WindowPadding = ImVec2(12, 12);
+
 	Render(info.Env());
 }
 
@@ -427,6 +433,16 @@ void SetupOverlay(const CallbackInfo &info)
 	isInitialised = true;
 }
 
+void CreateCategory(const CallbackInfo& info) {
+	renderElements[renderElementCount] = {
+		info[0].As<String>().Utf8Value(),
+		"category",
+		nullptr
+	};
+
+	renderElementCount++;
+}
+
 void CreateLabel(const CallbackInfo& info) {
 	renderElements[renderElementCount] = {
 		info[0].As<String>().Utf8Value(),
@@ -460,6 +476,7 @@ void CreateSlider(const CallbackInfo& info) {
 Object Init(Env env, Object exports)
 {
 	Object components = Object::New(env);
+	components.Set("createCategory", Function::New(env, CreateCategory));
 	components.Set("createLabel", Function::New(env, CreateLabel));
 	components.Set("createCheckbox", Function::New(env, CreateCheckbox));
 	components.Set("createSlider", Function::New(env, CreateSlider));

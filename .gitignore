@@ -7,3 +7,4 @@ node_modules/
 dist/
 codegen/output/
 .vscode/
+src/ui/binding/build/
