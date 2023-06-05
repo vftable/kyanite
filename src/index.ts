@@ -60,7 +60,7 @@ console.log();
 
 UI.setupOverlay("Geometry Dash");
 
-UI.Components.createCategory("ExampleMod");
+UI.Components.createCategory("Example Category");
 
 UI.Components.createLabel("Example Text");
 
